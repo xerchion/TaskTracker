@@ -1,6 +1,8 @@
 Progreso
 
+Errores:   Al no indicar acción, no muestra correctamente el error de salida de ese fallo
 
+guarda cambios en git
 7 comentar el código
 10 readme.txt
 mejorar el codigo lo posible

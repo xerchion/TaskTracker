@@ -5,7 +5,7 @@ from unittest.mock import patch
 import pytest
 
 from constants import ACTIONS
-from TaskTracker import catch_intro, validate_action
+from TaskTracker import catch_intro
 
 
 def test_catch_intro_with_arguments():
@@ -21,11 +21,4 @@ def test_catch_intro_without_arguments():
     test_args = ["TaskTracker.py"]
     with patch.object(sys, "argv", test_args):
         result = catch_intro()
-        assert result == "   "
-        # Aquí asumes que esto es lo que debería devolver
-
-
-def test_validate_action():
-    for action in ACTIONS:
-        assert True is validate_action(action)
-    assert False is validate_action("alboraya")
+        assert result == []

@@ -1,5 +1,7 @@
 import sys
+from typing import List
 
+from Action import Action
 from constants import ACTION_POS, ACTIONS, NAME_FILE
 from File import File
 from TodoList import TodoList
@@ -7,84 +9,51 @@ from TodoList import TodoList
 file = File(NAME_FILE)
 
 
-def catch_intro():
-    # Capture parameters of user in CLI
-    # return:  user´s action and text of task
-    arguments = sys.argv
-    if len(sys.argv) > 1:
-        arguments = sys.argv[1:]
-    else:
-        arguments = "   "
-
-        # if len(sys.argv) == 1:            # debuggeo
-        #    arguments = default_args
-
-    return arguments
+def catch_intro() -> List[str]:
+    """Capture parameters of user in CLI and return them as a list."""
+    return sys.argv[1:] if len(sys.argv) > 1 else []
 
 
-def validate_action(action):
-    # desestructurar la instrucción
-    # Valida si el usuario introduce una accion correcta
-    if action in ACTIONS:
-        # validada
-        return True
-    else:
-        # ninguna accion
-        if action == " ":
-            print("Indique una acción")
-        # accion no válida
-        else:
-            print("Invalid sentence")
-    return False
-
-
-def action_works():
-    # leer datos desde el archivo
-    # Añadir tareas
-    if action == "add":
-        if n_args > 1:
-            task_name = arguments[1]
-            if not todo_list.task_exists(task_name):
-                todo_list.add_task(task_name)
+def run_user_action():
+    if action.get_name() == "add":
+        if action.has_valid_arguments():
+            if not todo_list.task_exists(action.get_name()):
+                todo_list.add_task(action.get_name())
                 file.save_data(todo_list.to_dict())
             else:
-                print(
-                    "\nYa hay una tarea con esa descripción, se muestra a continuación: "
-                )
-                task = []
-                task.append(todo_list.get_task(task_name))
-                todo_list.view(task)
-
+                print("\nYa hay una tarea con esa descripción. ")
+                print("Se muestra a continuación: ")
+                todo_list.view(todo_list.get_task(action.get_name()))
         else:
             print("Para añadir una tarea es necesaria su descripcion")
     elif action == "update":
-        if n_args > 1:
+        if action.get_n_args() > 1:
             task_id = int(arguments[1])
             task_new_name = arguments[2]
-            todo_list.update(task_id, task_new_name)
+            todo_list.update_task(task_id, task_new_name)
             file.save_data(todo_list.to_dict())
         else:
             print("Para añadir una tarea es necesaria su descripcion")
     elif action == "delete":
-        if n_args > 1:
+        if action.get_n_args() > 1:
             task_id = int(arguments[1])
-            if todo_list.delete(task_id):
+            if todo_list.delete_task(task_id):
                 file.save_data(todo_list.to_dict())
                 print("Tarea borrada, correctamente, de la lista")
 
             else:
                 print("No existe ninguna tarea con ese identificador")
     elif action[:4] == "mark":
-        if n_args > 1:
+        if action.get_n_args() > 1:
             task_id = int(arguments[1])
             if task_id < todo_list.size():
-                todo_list.mark(task_id, action[5:])
+                todo_list.mark_task(task_id, action[5:])
                 file.save_data(todo_list.to_dict())
             else:
                 print("No existe una tarea con ese identificador")
     elif action == "list":
         filter = arguments[1]
-        if n_args == 1:  # opcion de listado completo, sin mas argumentos
+        if action.get_n_args() == 1:  # opcion de listado completo, sin mas argumentos
             tasks = todo_list.filter_by("all")
         else:  # listar por tipo
             tasks = todo_list.filter_by(filter)
@@ -104,9 +73,12 @@ if not file.exists():
 else:
     todo_list = TodoList(file.extract_data())
 todo_list = TodoList(file.extract_data())
+print(len(arguments))
+action = Action(arguments)
 
-action = arguments[ACTION_POS]
-n_args = len(arguments)
-
-if validate_action(action):
-    action_works()
+if action.is_valid():
+    run_user_action()
+    print("ejecuta el run")
+else:
+    print(action.show_error())
+    print("deberia mostrar el error")

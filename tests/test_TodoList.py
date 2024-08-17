@@ -34,20 +34,20 @@ def test_get_new_id(dtl):
 
 def test_update(dtl):
     text = "test"
-    dtl.update(0, text)
+    dtl.update_task(0, text)
     assert dtl.tasks[0].get_description() == text
 
 
 def test_delete(dtl):
     dtl.add_task(DATA)
-    dtl.delete(0)
+    dtl.delete_task(0)
     assert dtl.get_new_id() - 1 == dtl.tasks[-1].get_id()
 
 
 def test_mark(dtl):
     new_status = "done"
     old_status = dtl.tasks[0].get_status()
-    dtl.mark(0, new_status)
+    dtl.mark_task(0, new_status)
     assert old_status != new_status
 
 
