@@ -1,7 +1,7 @@
 Progreso
-
-Errores:   Al no indicar acción, no muestra correctamente el error de salida de ese fallo
-
+Ve una por una de las acciones, crea un test para ella y pruebalas a mano tmb
+YA HECHO EN ADD, AHORA HAY QUE VER QUE VAYA LOS FIXTURES.... EN TEST_MAIN LIN:13
+Traducir todo al ingles.
 guarda cambios en git
 7 comentar el código
 10 readme.txt

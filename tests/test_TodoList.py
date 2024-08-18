@@ -5,7 +5,7 @@ from TodoList import TodoList
 
 DATA = [
     {
-        "id": 0,
+        "id": "0",
         "description": "bibenenida",
         "status": "todo",
         "created_at": 1723482790.2585022,
@@ -13,7 +13,7 @@ DATA = [
     }
 ]
 task = Task(
-    int(DATA[0]["id"]),
+    DATA[0]["id"],
     DATA[0]["description"],
     DATA[0]["status"],
     DATA[0]["created_at"],

@@ -2,7 +2,7 @@ import sys
 from typing import List
 
 from Action import Action
-from constants import ACTION_POS, ACTIONS, NAME_FILE
+from constants import NAME_FILE
 from File import File
 from TodoList import TodoList
 
@@ -14,11 +14,12 @@ def catch_intro() -> List[str]:
     return sys.argv[1:] if len(sys.argv) > 1 else []
 
 
-def run_user_action():
+def run_user_action(action, todo_list):
     if action.get_name() == "add":
         if action.has_valid_arguments():
-            if not todo_list.task_exists(action.get_name()):
-                todo_list.add_task(action.get_name())
+            description = action.get_args()[1]
+            if not todo_list.task_exists(description):
+                todo_list.add_task(description)
                 file.save_data(todo_list.to_dict())
             else:
                 print("\nYa hay una tarea con esa descripción. ")
@@ -26,7 +27,7 @@ def run_user_action():
                 todo_list.view(todo_list.get_task(action.get_name()))
         else:
             print("Para añadir una tarea es necesaria su descripcion")
-    elif action == "update":
+    elif action.get_name() == "update":
         if action.get_n_args() > 1:
             task_id = int(arguments[1])
             task_new_name = arguments[2]
@@ -34,7 +35,7 @@ def run_user_action():
             file.save_data(todo_list.to_dict())
         else:
             print("Para añadir una tarea es necesaria su descripcion")
-    elif action == "delete":
+    elif action.get_name() == "delete":
         if action.get_n_args() > 1:
             task_id = int(arguments[1])
             if todo_list.delete_task(task_id):
@@ -43,7 +44,7 @@ def run_user_action():
 
             else:
                 print("No existe ninguna tarea con ese identificador")
-    elif action[:4] == "mark":
+    elif action.get_name()[:4] == "mark":
         if action.get_n_args() > 1:
             task_id = int(arguments[1])
             if task_id < todo_list.size():
@@ -53,7 +54,8 @@ def run_user_action():
                 print("No existe una tarea con ese identificador")
     elif action == "list":
         filter = arguments[1]
-        if action.get_n_args() == 1:  # opcion de listado completo, sin mas argumentos
+        # opcion de listado completo, sin mas argumentos
+        if action.get_n_args() == 1:
             tasks = todo_list.filter_by("all")
         else:  # listar por tipo
             tasks = todo_list.filter_by(filter)
@@ -73,12 +75,9 @@ if not file.exists():
 else:
     todo_list = TodoList(file.extract_data())
 todo_list = TodoList(file.extract_data())
-print(len(arguments))
 action = Action(arguments)
 
 if action.is_valid():
-    run_user_action()
-    print("ejecuta el run")
+    run_user_action(action, todo_list)
 else:
     print(action.show_error())
-    print("deberia mostrar el error")

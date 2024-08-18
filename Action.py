@@ -7,8 +7,8 @@ VALID_ARGUMENTS = N_ARGUMENTS
 class Action:
     def __init__(self, arguments):
         self.name = arguments[0] if len(arguments) > 0 else ""
-        self.arguments = arguments
-        self.n_args = len(arguments)
+        self.arguments = arguments[0:]
+        self.n_args = len(arguments) - 1
         self.error = "No hay ningun error"
 
     def is_valid(self) -> bool:
@@ -31,14 +31,18 @@ class Action:
 
     def has_valid_arguments(self) -> bool:
         pos = VALID_ACTIONS.index(self.name)
+
         if N_ARGUMENTS[pos] != self.n_args:
             self.error = "Número de argumentos no válido"
         return N_ARGUMENTS[pos] == self.n_args
 
     def is_valid_action(self):
         if self.name not in VALID_ACTIONS:
-            self.error = "Ación no válida"
+            self.error = "\nPor favor indique un comando válido. Puede ver la ayuda en el fichero read.me\n"
         return self.name in VALID_ACTIONS
 
     def show_error(self) -> str:
         return self.error
+
+    def get_args(self):
+        return self.arguments
