@@ -1,4 +1,4 @@
-from constants import ACTIONS, N_ARGUMENTS
+from constants import ACTIONS, N_ARGUMENTS, USER_MSG
 
 VALID_ACTIONS = ACTIONS
 VALID_ARGUMENTS = N_ARGUMENTS
@@ -9,18 +9,13 @@ class Action:
         self.name = arguments[0] if len(arguments) > 0 else ""
         self.arguments = arguments[0:]
         self.n_args = len(arguments) - 1
-        self.error = "No hay ningun error"
+        self.error = ""
 
     def is_valid(self) -> bool:
-
-        return (
-            self.is_valid_action()
-            and not self.is_empty()
-            and self.has_valid_arguments()
-        )
+        return self.is_valid_action() and not self.is_empty()
 
     def is_empty(self) -> bool:
-        self.error = "No ha indicado una acción, por favor escriba una."
+        self.error = USER_MSG["NO_ACTION"]
         return True if self.name == "" else False
 
     def get_name(self) -> str:
@@ -31,14 +26,13 @@ class Action:
 
     def has_valid_arguments(self) -> bool:
         pos = VALID_ACTIONS.index(self.name)
-
         if N_ARGUMENTS[pos] != self.n_args:
-            self.error = "Número de argumentos no válido"
+            self.error = USER_MSG["N_ARGS_NO_VALID"]
         return N_ARGUMENTS[pos] == self.n_args
 
     def is_valid_action(self):
         if self.name not in VALID_ACTIONS:
-            self.error = "\nPor favor indique un comando válido. Puede ver la ayuda en el fichero read.me\n"
+            self.error = USER_MSG["NO_VALID_ACTION"]
         return self.name in VALID_ACTIONS
 
     def show_error(self) -> str:

@@ -1,12 +1,16 @@
 import sys
 from typing import List
 
+from tabulate import tabulate
+
 from Action import Action
-from constants import NAME_FILE
+from constants import NAME_FILE, USER_MSG
 from File import File
 from TodoList import TodoList
+from View import View
 
 file = File(NAME_FILE)
+view = View()
 
 
 def catch_intro() -> List[str]:
@@ -14,56 +18,72 @@ def catch_intro() -> List[str]:
     return sys.argv[1:] if len(sys.argv) > 1 else []
 
 
-def run_user_action(action, todo_list):
+def run_user_action(action, todo_list, file):
     if action.get_name() == "add":
         if action.has_valid_arguments():
             description = action.get_args()[1]
             if not todo_list.task_exists(description):
                 todo_list.add_task(description)
                 file.save_data(todo_list.to_dict())
+                view.ok(USER_MSG["ADD_OK"])
             else:
-                print("\nYa hay una tarea con esa descripción. ")
-                print("Se muestra a continuación: ")
-                todo_list.view(todo_list.get_task(action.get_name()))
+                view.alert(USER_MSG["TASK_ALREADY_EXISTS"])
+                todo_list.prepare_view(todo_list.get_task_by_description(description))
         else:
-            print("Para añadir una tarea es necesaria su descripcion")
-    elif action.get_name() == "update":
-        if action.get_n_args() > 1:
-            task_id = int(arguments[1])
-            task_new_name = arguments[2]
-            todo_list.update_task(task_id, task_new_name)
-            file.save_data(todo_list.to_dict())
-        else:
-            print("Para añadir una tarea es necesaria su descripcion")
+            view.alert(USER_MSG["TASK_WITHOUT_DESCRIPTION"])
+
     elif action.get_name() == "delete":
-        if action.get_n_args() > 1:
-            task_id = int(arguments[1])
+        if action.has_valid_arguments():
+            task_id = int(action.get_args()[1])
             if todo_list.delete_task(task_id):
                 file.save_data(todo_list.to_dict())
-                print("Tarea borrada, correctamente, de la lista")
+                view.ok(USER_MSG["TASK_DELETED"])
+            else:
+                view.alert(USER_MSG["ID_NO_EXISTS"] + ":", task_id)
+        else:
+            view.alert(USER_MSG["ARGS_NO_VALID"])
+
+    elif action.get_name() == "update":
+        if action.has_valid_arguments():
+            task_id = int(action.get_args()[1])
+            if todo_list.get_task_by_id(task_id):
+                task_new_name = action.get_args()[2]
+                todo_list.update_task(task_id, task_new_name)
+                file.save_data(todo_list.to_dict())
+                view.ok(USER_MSG["UPDATED_OK"])
 
             else:
-                print("No existe ninguna tarea con ese identificador")
+                view.alert(USER_MSG["ID_NO_EXISTS"] + ":", task_id)
+        else:
+            view.alert(USER_MSG["TASK_WITHOUT_DESCRIPTION"])
+
     elif action.get_name()[:4] == "mark":
-        if action.get_n_args() > 1:
-            task_id = int(arguments[1])
-            if task_id < todo_list.size():
-                todo_list.mark_task(task_id, action[5:])
+        if action.has_valid_arguments():
+            task_id = int(action.get_args()[1])
+            if todo_list.get_task_by_id(task_id):
+                todo_list.mark_task(task_id, action.get_name()[5:])
                 file.save_data(todo_list.to_dict())
+                view.ok(USER_MSG["UPDATED_OK"])
+
             else:
-                print("No existe una tarea con ese identificador")
-    elif action == "list":
-        filter = arguments[1]
+                view.alert(USER_MSG["ID_NO_EXISTS"] + ":", task_id)
+
+    elif action.get_name() == "list":
+        filter = "all"
         # opcion de listado completo, sin mas argumentos
         if action.get_n_args() == 1:
-            tasks = todo_list.filter_by("all")
-        else:  # listar por tipo
-            tasks = todo_list.filter_by(filter)
+            # listar por tipo
+            filter = action.get_args()[1]
+        tasks = todo_list.filter_by(filter)
         if len(tasks) != 0:
-            print("\nMostrando tareas por filtro:     " + filter + "\n")
-            todo_list.view(tasks)
+            view.info(USER_MSG["FILTERED_TASKS"] + filter + "\n")
+            view.info(todo_list.prepare_view(tasks))
+
         else:
-            print("No hay ninguna tarea en estado: " + filter)
+            view.alert(USER_MSG["NO_TASK_IN_STATUS"] + filter)
+    # else:
+    #     view.alert("El comando no es valido")
+    #     print(action.get_name())
 
 
 # Main
@@ -78,6 +98,7 @@ todo_list = TodoList(file.extract_data())
 action = Action(arguments)
 
 if action.is_valid():
-    run_user_action(action, todo_list)
+    run_user_action(action, todo_list, file)
 else:
-    print(action.show_error())
+    view.alert(action.show_error())
+    view.info(USER_MSG["HELP"])
