@@ -13,7 +13,6 @@ class File:
         if os.path.exists(self.name):
             os.remove(self.name)
         else:
-            print(f"El archivo {self.name} no existe.")
             return False
 
     def save_data(self, data):

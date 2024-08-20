@@ -1,63 +1,74 @@
-<h1 class="code-line" data-line-start="0" data-line-end="1"><a id="Task_Tracker_CLI_0"></a>Task Tracker CLI</h1>
-<p class="has-line-data" data-line-start="2" data-line-end="3">Instructions</p>
-<ol>
-<li class="has-line-data" data-line-start="3" data-line-end="6">
-<p class="has-line-data" data-line-start="3" data-line-end="5">Clone the repository<br>
-<code>git clone AGREGAR MI DIRECCION</code></p>
-</li>
-<li class="has-line-data" data-line-start="6" data-line-end="10">
-<p class="has-line-data" data-line-start="6" data-line-end="9">Create virtual enviroment<br>
-If you do not have virtualenv installed, you can install it with the following command: <code>pip install virtualenv</code><br>
-Create virtual enviroment: <code>virtualenv vitual_enviroment_name</code></p>
-</li>
-<li class="has-line-data" data-line-start="10" data-line-end="14">
-<p class="has-line-data" data-line-start="10" data-line-end="13">Activate virtual enviroment<br>
-In Linux and Mac: <code>source vitual_enviroment_name/bin/activate</code><br>
-In Windows: <code>.\vitual_enviroment_name\Scripts\activate</code></p>
-</li>
-<li class="has-line-data" data-line-start="14" data-line-end="17">
-<p class="has-line-data" data-line-start="14" data-line-end="16">Install dependencies<br>
-Run this command: <code>pip install -r requirements.txt</code></p>
-</li>
-</ol>
-<p class="has-line-data" data-line-start="17" data-line-end="18">Run the project</p>
-<ol>
-<li class="has-line-data" data-line-start="18" data-line-end="22">
-<p class="has-line-data" data-line-start="18" data-line-end="21">List all tasks: <code>python TaskTracker.py list</code><br>
-Output:<br>
-<img src="image.png" alt="alt text"></p>
-</li>
-<li class="has-line-data" data-line-start="22" data-line-end="28">
-<p class="has-line-data" data-line-start="22" data-line-end="27">List by status: <code>python TaskTracker.py list argument</code><br>
-Valid arguments = todo, done, in-process<br>
-Example: <code>python TaskTracker.py list todo</code><br>
-Output:<br>
-<img src="image-1.png" alt="alt text"></p>
-</li>
-<li class="has-line-data" data-line-start="28" data-line-end="31">
-<p class="has-line-data" data-line-start="28" data-line-end="30">Add a new task: <code>python TaskTracker.py add &quot;Need buy apples&quot;</code><br>
-Output: Task added successfully (ID: 4)</p>
-</li>
-<li class="has-line-data" data-line-start="31" data-line-end="35">
-<p class="has-line-data" data-line-start="31" data-line-end="34">Delete a task: <code>python TaskTracker.py delete ID</code><br>
-Example: <code>python TaskTracker.py delete 1</code><br>
-Output: Task deleted</p>
-</li>
-<li class="has-line-data" data-line-start="35" data-line-end="39">
-<p class="has-line-data" data-line-start="35" data-line-end="38">Update a task: <code>python TaskTracker.py ID --task &quot;task&quot;</code><br>
-Example: <code>python TaskTracker.py update 2 --task &quot;Wash the dishes&quot;</code><br>
-Output: Task with ID 2 has been updated</p>
-</li>
-<li class="has-line-data" data-line-start="39" data-line-end="43">
-<p class="has-line-data" data-line-start="39" data-line-end="42">Mark as in-process: <code>python TaskTracker.py mark-in-process ID</code><br>
-Example: <code>python TaskTracker.py mark-in-process 2</code><br>
-Output: The status of the task with ID 2 has been updated</p>
-</li>
-<li class="has-line-data" data-line-start="43" data-line-end="47">
-<p class="has-line-data" data-line-start="43" data-line-end="46">Mark as done: <code>python TaskTracker.py mark-done ID</code><br>
-Example: <code>python TaskTracker.py mark-done 2</code><br>
-Output: The status of the task with ID 2 has been updated</p>
-</li>
-</ol>
-<p class="has-line-data" data-line-start="47" data-line-end="48"><a href="https://roadmap.sh/projects/task-tracker">Project Link</a></p>
-</body></html>
+# Task Tracker CLI
+
+## Description
+Task Tracker CLI is a simple command-line application that allows you to add, update, mark, and delete tasks in a JSON file. The application also lets you view a list of tasks based on their status.
+
+
+This project is part of the [roadmap.sh](https://roadmap.sh/) backend learning path. It serves as a hands-on exercise to reinforce concepts and skills in backend development.
+
+
+## Usage
+To execute the commands, the `python TaskTracker.py` command should be followed by the appropriate subcommands and arguments based on the operation you wish to perform. The specific commands for each operation are listed below.
+### Add Task
+
+To add a new task, use the `add`command followed by the task description.
+
+```bash
+python TaskTracker.py add "somthing to do"
+```
+
+### List Tasks
+
+To list tasks based on their status, use the `list` command with an argument specifying "todo", "in-progress", or "done". All tasks can be displayed by omitting the status argument.
+
+```bash
+python TaskTracker.py list "todo"
+python TaskTracker.py list
+```
+
+### Update Task Description
+
+To update a task's description, use the `update` command followed by the task ID and the new description.
+
+```bash
+python TaskTracker.py 2 "I need to do this other thing"
+```
+
+### Mark Task Status
+
+To mark a task as "in-progress" or "done," use the `mark` command along with the task ID and the desired status.
+
+```bash
+python TaskTracker.py mark-in-progress 1
+python TaskTracker.py mark-done 2
+```
+
+### Delete Task
+
+To delete a task, use the `delete` command followed by the task ID you wish to remove.
+
+```bash
+python TaskTracker.py delete 2
+```
+### Technical Notes
+
+
+- **Programming Paradigm**:
+This project is designed using object-oriented programming principles, ensuring modularity and reusability of code.
+- **Testing**:
+Unit tests are written using pytest and unittest to ensure functionality and catch issues early. Test coverage is monitored using coverage to ensure that all parts of the codebase are adequately tested.
+- **Code Quality**:
+The project adheres to best practices in programming, including consistent code style and design patterns. Type hinting is employed for code clarity and to assist in maintaining a clear and understandable codebase.
+- **Linting**: Code linting tools are used to enforce coding standards and improve code quality. Type checking is utilized to catch potential type errors and enhance code readability.
+## Contact
+
+
+If you have any questions, feel free to reach out:
+
+Email: xerchion@gmail.com
+
+GitHub: [Sergio U.B.](https://github.com/xerchion)
+
+## Project Link
+
+For more details about this project, visit the [Task Tracker Project Roadmap](https://roadmap.sh/projects/task-tracker).
