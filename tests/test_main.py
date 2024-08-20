@@ -11,20 +11,16 @@ from TaskTracker import catch_intro, run_user_action
 from TodoList import TodoList
 
 
-# / probar con esto a usarlo en add y luego cuando vaya, las demas....
 @pytest.fixture
 def setup():
-    # Configuración del entorno de pruebas
     file = File(NAME_FILE)
     if not file.exists():
-        file.create([])  # Crea el archivo si no existe
+        file.create([])
     todo_list = TodoList(file.extract_data())
-
     return todo_list, file
 
 
 def test_catch_intro_with_arguments():
-    # Simula argumentos de línea de comandos
     test_args = ["TaskTracker.py", "add", "task1"]
     with patch.object(sys, "argv", test_args):
         result = catch_intro()
@@ -32,7 +28,6 @@ def test_catch_intro_with_arguments():
 
 
 def test_catch_intro_without_arguments():
-    # Simula la ejecución sin argumentos de línea de comandos
     test_args = ["TaskTracker.py"]
     with patch.object(sys, "argv", test_args):
         result = catch_intro()
@@ -40,11 +35,11 @@ def test_catch_intro_without_arguments():
 
 
 def test_user_arguments_add_action(setup):
-    # Test para la accion ADD
-    # Comprueba que añade una tarea con su descriptcion
-    # Comprueba que hay un registro más en el almacenamiento
 
-    task_name = "probando ADD"
+    # Verifies that a task is added with the correct description.
+    # Verifies that there is one more record in the storage.
+
+    task_name = "testing ADD"
     action = Action(["add", task_name])
     todo_list, file = setup
     last_size = todo_list.size()
@@ -54,120 +49,100 @@ def test_user_arguments_add_action(setup):
     assert task.get_description() == task_name
     assert todo_list.size() == last_size + 1
 
-    # borrando la tarea de prueba
-    todo_list, file = setup
+    # Clean up: Delete the test task
     action = Action(["delete", task.get_id()])
     run_user_action(action, todo_list, file)
 
 
 def test_user_arguments_delete_action(setup):
-    # Test para la accion DELETE
-
-    # Comprueba que borra correctamente un registro
-    # Comprueba que hay un registro menos en el almacenamiento
+    # Verifies that a task is deleted correctly.
+    # Verifies that there is one less record in the storage after deletion.
     todo_list, file = setup
 
-    # Añadir tarea para posteriormente borrarla
-    task_name = "prueba de borrado"
+    # Add a task to later delete it
+    task_name = "delete test task"
     action = Action(["add", task_name])
     run_user_action(action, todo_list, file)
     task_id = todo_list.get_task_by_description(task_name).get_id()
 
-    # Accion de borrado
+    # Perform the DELETE action
     action = Action(["delete", task_id])
-    todo_list, file = setup
     last_size = todo_list.size()
     run_user_action(action, todo_list, file)
+
+    # Refresh the todo list to reflect the deletion
     todo_list, file = setup
 
-    assert todo_list.id_exists(task_id) is False
-    # assert todo_list.get_task(task_name).get_description() == task_name
+    # Verify the task no longer exists
+    assert not todo_list.id_exists(task_id)
     assert todo_list.size() == last_size - 1
 
 
 def test_user_arguments_update_action(setup):
-    # Test para la accion UPDATE
-    # el Test comprueba:
-    #   - El registro existe.
-    #   - El registro se actualiza correctamente
-    #   - El numero de elementos no varía
+    # The test verifies:
+    # - The record exists.
+    # - The record is updated correctly.
+    # - The number of items does not change.
 
     todo_list, file = setup
     last_size = todo_list.size()
-    id = todo_list.tasks[0].get_id()
-    # Añadir tarea para posteriormente borrarla
-    task_new_name = "MODIFICADO"
-    action = Action(
-        [
-            "update",
-            id,
-            task_new_name,
-        ]
-    )
-    run_user_action(action, todo_list, file)
-    task_id = todo_list.get_task_by_description(task_new_name).get_id()
+    task_id = todo_list.tasks[0].get_id()
 
+    # Update the task
+    updated_task_name = "UPDATED"
+    action = Action(["update", task_id, updated_task_name])
+    run_user_action(action, todo_list, file)
+
+    # Verify the task was updated correctly
     assert todo_list.id_exists(task_id) is True
-    assert todo_list.get_task_by_id(task_id).get_description() == task_new_name
+    assert todo_list.get_task_by_id(task_id).get_description() == updated_task_name
     assert todo_list.size() == last_size
 
 
 def test_user_arguments_mark_action(setup):
-    # Test para la accion MARK
-    # el Test comprueba:
-    #   - El registro existe.
-    #   - El registro se actualiza correctamente
-    #   - El numero de elementos no varía
+    # The test verifies:
+    # - The record exists.
+    # - The record is updated correctly.
+    # - The number of items does not change.
 
     todo_list, file = setup
     last_size = todo_list.size()
-    id = todo_list.tasks[0].get_id()
-    # Añadir tarea para posteriormente borrarla
-    action = Action(["mark-done", id])
+    task_id = todo_list.tasks[0].get_id()
+
+    # Mark the task as done
+    action = Action(["mark-done", task_id])
     run_user_action(action, todo_list, file)
 
-    assert todo_list.id_exists(id) is True
-    assert todo_list.get_task_by_id(id).get_status() == "done"
+    # Verify the task status is updated to "done"
+    assert todo_list.id_exists(task_id) is True
+    assert todo_list.get_task_by_id(task_id).get_status() == "done"
     assert todo_list.size() == last_size
 
 
 def test_user_arguments_list_action(setup, capsys):
-    # Test para la accion LIST
-    # el Test comprueba:
-    #   - La salida es correcta.
-    #   -
-    #   -
 
-    # añadimos una tarea con un estado especial:  LISTING
-    # Test para la accion ADD
-    # Comprueba que añade una tarea con su descriptcion
-    # Comprueba que hay un registro más en el almacenamiento
-    # Añadir tarea para posteriormente borrarla
+    todo_list, file = setup
+
+    # Add a task with a special status: LISTING
     task_name = "Listar por status"
     action = Action(["add", task_name])
-    todo_list, file = setup
     run_user_action(action, todo_list, file)
-    todo_list, file = setup
 
+    # Mark the task as done
     task = todo_list.get_task_by_description(task_name)
-
     action = Action(["mark-done", task.get_id()])
     run_user_action(action, todo_list, file)
-    task = todo_list.get_task_by_description(task_name)
 
+    # List tasks with the 'done' status
     status = "done"
     action = Action(["list", status])
     run_user_action(action, todo_list, file)
-    todo_list, file = setup
-    task = todo_list.get_task_by_description(task_name)
 
-    # borrando la tarea de prueba
-    todo_list, file = setup
+    # Capture the output
+    captured_output = capsys.readouterr()
+    expected_output = f" {task_name}                       done"
+    assert expected_output in captured_output.out
+
+    # Clean up: Delete the test task
     action = Action(["delete", task.get_id()])
     run_user_action(action, todo_list, file)
-    todo_list, file = setup
-
-    # Capturamos la salida
-    salida = capsys.readouterr()
-    exit = " Listar por status                       done"
-    assert exit in salida.out

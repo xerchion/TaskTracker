@@ -8,65 +8,51 @@ from TodoList import TodoList
 from View import View
 
 
-# Capture parameters of user in CLI and return them as a list.
 def catch_intro() -> List[str]:
     return sys.argv[1:] if len(sys.argv) > 1 else []
 
 
 def run_user_action(action, todo_list, file):
+    task_id = None
+    if action.get_name() in ["delete", "mark", "update"]:
+        task_id = int(action.get_args()[1])
+
     if action.get_name() == "add":
-        if action.has_valid_arguments():
-            description = action.get_args()[1]
-            if not todo_list.task_exists(description):
-                todo_list.add_task(description)
-                file.save_data(todo_list.to_dict())
-                view.ok(USER_MSG["ADD_OK"])
-            else:
-                view.alert(USER_MSG["TASK_ALREADY_EXISTS"])
-                todo_list.prepare_view(todo_list.get_task_by_description(description))
+        description = action.get_args()[1]
+        if not todo_list.task_exists(description):
+            todo_list.add_task(description)
+            file.save_data(todo_list.to_dict())
+            view.ok(USER_MSG["TASK_ADDED_OK"])
         else:
-            view.alert(USER_MSG["TASK_WITHOUT_DESCRIPTION"])
+            view.alert(USER_MSG["TASK_ALREADY_EXISTS"])
+            todo_list.prepare_view(todo_list.get_task_by_description(description))
 
     elif action.get_name() == "delete":
-        if action.has_valid_arguments():
-            task_id = int(action.get_args()[1])
-            if todo_list.delete_task(task_id):
-                file.save_data(todo_list.to_dict())
-                view.ok(USER_MSG["TASK_DELETED"])
-            else:
-                view.alert(USER_MSG["ID_NO_EXISTS"] + ":", task_id)
+        if todo_list.delete_task(task_id):
+            file.save_data(todo_list.to_dict())
+            view.ok(USER_MSG["TASK_DELETED_OK"])
         else:
-            view.alert(USER_MSG["ARGS_NO_VALID"])
+            view.alert(USER_MSG["ID_NO_EXISTS"] + ":", task_id)
 
     elif action.get_name() == "update":
-        if action.has_valid_arguments():
-            task_id = int(action.get_args()[1])
-            if todo_list.get_task_by_id(task_id):
-                task_new_name = action.get_args()[2]
-                todo_list.update_task(task_id, task_new_name)
-                file.save_data(todo_list.to_dict())
-                view.ok(USER_MSG["UPDATED_OK"])
-            else:
-                view.alert(USER_MSG["ID_NO_EXISTS"] + ":", task_id)
+        if todo_list.get_task_by_id(task_id):
+            task_new_name = action.get_args()[2]
+            todo_list.update_task(task_id, task_new_name)
+            file.save_data(todo_list.to_dict())
+            view.ok(USER_MSG["TASK_UPDATED_OK"])
         else:
-            view.alert(USER_MSG["TASK_WITHOUT_DESCRIPTION"])
+            view.alert(USER_MSG["ID_NO_EXISTS"] + ":", task_id)
 
     elif action.get_name()[:4] == "mark":
-        if action.has_valid_arguments():
-            task_id = int(action.get_args()[1])
-            if todo_list.get_task_by_id(task_id):
-                todo_list.mark_task(task_id, action.get_name()[5:])
-                file.save_data(todo_list.to_dict())
-                view.ok(USER_MSG["UPDATED_OK"])
-
-            else:
-                view.alert(USER_MSG["ID_NO_EXISTS"] + ":", task_id)
+        task_id = int(action.get_args()[1])
+        if todo_list.get_task_by_id(task_id):
+            todo_list.mark_task(task_id, action.get_name()[5:])
+            file.save_data(todo_list.to_dict())
+            view.ok(USER_MSG["TASK_UPDATED_OK"])
 
     elif action.get_name() == "list":
         filter = "all"
-        # opcion de listado completo, sin mas argumentos
         if action.get_n_args() == 1:
-            # listar por tipo
             filter = action.get_args()[1]
         tasks = todo_list.filter_by(filter)
         if len(tasks) != 0:

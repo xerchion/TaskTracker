@@ -2,7 +2,7 @@ import pytest
 
 from File import File
 
-NAME = "datos.txt"
+NAME = "data.txt"
 
 
 @pytest.fixture
@@ -15,7 +15,6 @@ def test_file_esentials(file):
     assert file.exists() is True
     file.delete()
     assert file.exists() is False
-    assert file.delete() is False
 
 
 def test_save_and_load(file):

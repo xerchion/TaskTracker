@@ -1,6 +1,6 @@
 Progreso
 
-7 comentar el código de TodoList, en ingles....     y GIT
+
 10 README.MD   empezado, sigue...                   Y GIT
 Repasa lo que hace falta poner en el proyecto antes de subirlo.
 hazlo

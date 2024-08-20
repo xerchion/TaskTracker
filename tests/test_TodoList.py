@@ -6,7 +6,7 @@ from TodoList import TodoList
 DATA = [
     {
         "id": "0",
-        "description": "bibenenida",
+        "description": "testing todolist",
         "status": "todo",
         "created_at": 1723482790.2585022,
         "updated_at": 1723484274.2685523,
@@ -22,49 +22,48 @@ task = Task(
 
 
 @pytest.fixture
-def dtl():
+def todo_list():
     return TodoList(DATA)
 
 
-def test_get_new_id(dtl):
-    assert dtl.get_new_id() == 1
-    dtl.add_task(DATA)
-    assert dtl.get_new_id() == 2
+def test_get_new_id(todo_list):
+    assert todo_list.get_new_id() == 1
+    todo_list.add_task(DATA)
+    assert todo_list.get_new_id() == 2
 
 
-def test_update(dtl):
-    text = "test"
-    dtl.update_task(0, text)
-    assert dtl.tasks[0].get_description() == text
+def test_update(todo_list):
+    text = "new description update"
+    todo_list.update_task(0, text)
+    assert todo_list.tasks[0].get_description() == text
 
 
-def test_delete(dtl):
-    dtl.add_task(DATA)
-    dtl.delete_task(0)
-    assert dtl.get_new_id() - 1 == dtl.tasks[-1].get_id()
+def test_delete(todo_list):
+    todo_list.add_task(DATA)
+    todo_list.delete_task(0)
+    assert todo_list.get_new_id() - 1 == todo_list.tasks[-1].get_id()
 
 
-def test_mark(dtl):
+def test_mark(todo_list):
     new_status = "done"
-    old_status = dtl.tasks[0].get_status()
-    dtl.mark_task(0, new_status)
+    old_status = todo_list.tasks[0].get_status()
+    todo_list.mark_task(0, new_status)
     assert old_status != new_status
 
 
-def test_filter_by(dtl):
-
-    tasks = dtl.filter_by("all")
+def test_filter_by(todo_list):
+    tasks = todo_list.filter_by("all")
     assert len(tasks) == len(DATA)
-    # tasks no existentes
-    tasks = dtl.filter_by("in_progress")
+
+    # Testing with a filter that matches no task
+    tasks = todo_list.filter_by("in_progress")
     assert tasks == []
 
-    # tasks con filtro especifico: estado: todo
-    tasks = dtl.filter_by("todo")
+    tasks = todo_list.filter_by("todo")
     assert tasks[0].get_status() == "todo"
 
 
-def test_to_dict(dtl):
-    elements_dict = dtl.to_dict()
-    assert len(elements_dict) == dtl.size()
-    assert elements_dict[0]["description"] == dtl.tasks[0].get_description()
+def test_to_dict(todo_list):
+    elements_dict = todo_list.to_dict()
+    assert len(elements_dict) == todo_list.size()
+    assert elements_dict[0]["description"] == todo_list.tasks[0].get_description()

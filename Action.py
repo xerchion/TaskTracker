@@ -13,7 +13,11 @@ class Action:
         self.error_message = ""
 
     def is_valid(self) -> bool:
-        return self.is_valid_action() and not self.is_empty()
+        if not self.is_valid_action() or self.is_empty():
+            return False
+        if not self.has_valid_arguments():
+            return False
+        return True
 
     def is_empty(self) -> bool:
         self.error_message = USER_MSG["NO_ACTION"]
@@ -27,9 +31,16 @@ class Action:
 
     def has_valid_arguments(self) -> bool:
         pos = VALID_ACTIONS.index(self.name)
-        if N_ARGUMENTS[pos] != self.n_args:
-            self.error_message = USER_MSG["N_ARGS_NO_VALID"]
-        return N_ARGUMENTS[pos] == self.n_args
+        expected_args = N_ARGUMENTS[pos]
+
+        if isinstance(expected_args, list):
+            if self.n_args in expected_args:
+                return True
+        elif expected_args == self.n_args:
+            return True
+
+        self.error_message = USER_MSG["N_ARGS_NO_VALID"]
+        return False
 
     def is_valid_action(self) -> bool:
         if self.name not in VALID_ACTIONS:
