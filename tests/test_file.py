@@ -11,7 +11,7 @@ def file():
 
 
 def test_file_esentials(file):
-    file.create("datos")
+    file.save_data("datos")
     assert file.exists() is True
     file.delete()
     assert file.exists() is False

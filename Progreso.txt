@@ -1,9 +1,9 @@
 Progreso
-Ve una por una de las acciones, crea un test para ella y pruebalas a mano tmb
-YA HECHO EN ADD, AHORA HAY QUE VER QUE VAYA LOS FIXTURES.... EN TEST_MAIN LIN:13
-Traducir todo al ingles.
-guarda cambios en git
-7 comentar el código
-10 readme.txt
-mejorar el codigo lo posible
+
+7 comentar el código de TodoList, en ingles....     y GIT
+10 README.MD   empezado, sigue...                   Y GIT
+Repasa lo que hace falta poner en el proyecto antes de subirlo.
+hazlo
+
+final..............................
 subir a github

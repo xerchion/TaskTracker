@@ -64,9 +64,6 @@ class TodoList:
         return filtered_tasks
 
     def to_tasks(self, data):
-        # parametros: data tipo diccionario
-        # convierta el dato recibido a la clase Task
-        #           y lo agrega a la lista de Tasks
         for task in data:
             self.tasks.append(
                 Task(
@@ -79,16 +76,13 @@ class TodoList:
             )
 
     def to_dict(self):
-        # convierta la lista de objetos Tasks en una lista de diccionarios
-        # return: la lista de diccionarios
         list_dict_task = []
         for task in self.tasks:
             list_dict_task.append(task.to_dict())
         return list_dict_task
 
     def prepare_view(self, data):
-        # Muestra la lista de tareas que recibe por parametro
-        # Puede obtener una sola tarea o una lista de ellas
+
         result = "\n\n" + "-" * 100
         result = result + "\n" + USER_MSG["HEADER_LIST"] + "\n"
         result = result + "-" * 100 + "\n"
@@ -115,7 +109,6 @@ class TodoList:
         )
 
     def get_task_by_id(self, id: int):
-        # Return task with this id, else None
         for task in self.tasks:
             if task.get_id() == id:
                 return task

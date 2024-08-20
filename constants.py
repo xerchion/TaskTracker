@@ -26,12 +26,4 @@ USER_MSG = {
 LAST = -1
 INC = 1
 
-# variables para debbug--------------------------Borrar cuando esten en desuso
-# default_args = ["add", "probando borrado"]
-# default_args = ["update", "0", "nueva descripcion"]
-# default_args = ["update", "0", "nueva descripcion"]
-# default_args = ["delete", "1"]
-# default_args = ["mark-done", "1"]
-# default_args = ["list"]
 
-# default_args = ["list", "done"]

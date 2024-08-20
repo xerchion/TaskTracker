@@ -1,20 +1,15 @@
 import sys
 from typing import List
 
-from tabulate import tabulate
-
 from Action import Action
 from constants import NAME_FILE, USER_MSG
 from File import File
 from TodoList import TodoList
 from View import View
 
-file = File(NAME_FILE)
-view = View()
 
-
+# Capture parameters of user in CLI and return them as a list.
 def catch_intro() -> List[str]:
-    """Capture parameters of user in CLI and return them as a list."""
     return sys.argv[1:] if len(sys.argv) > 1 else []
 
 
@@ -51,7 +46,6 @@ def run_user_action(action, todo_list, file):
                 todo_list.update_task(task_id, task_new_name)
                 file.save_data(todo_list.to_dict())
                 view.ok(USER_MSG["UPDATED_OK"])
-
             else:
                 view.alert(USER_MSG["ID_NO_EXISTS"] + ":", task_id)
         else:
@@ -81,24 +75,23 @@ def run_user_action(action, todo_list, file):
 
         else:
             view.alert(USER_MSG["NO_TASK_IN_STATUS"] + filter)
-    # else:
-    #     view.alert("El comando no es valido")
-    #     print(action.get_name())
 
 
-# Main
-arguments = catch_intro()  # call to capture user intro
+view = View()
 
-# comprobar si existe archivo json ya creado
+# Load data
+file = File(NAME_FILE)
 if not file.exists():
-    file.create([])
-else:
-    todo_list = TodoList(file.extract_data())
+    file.save_data([])
 todo_list = TodoList(file.extract_data())
+
+# Load user action
+arguments = catch_intro()
 action = Action(arguments)
+
 
 if action.is_valid():
     run_user_action(action, todo_list, file)
 else:
-    view.alert(action.show_error())
+    view.alert(action.get_error_message())
     view.info(USER_MSG["HELP"])
